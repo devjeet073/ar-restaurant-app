@@ -213,8 +213,32 @@ const SceneContent: React.FC<Three3DSceneProps> = ({ menuItem }) => {
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('touchmove', handlePointerMove, { passive: true });
 
-    // pointer/touch down/up to enable drag-based control and inertia
-    const handlePointerDown = () => { isPointerDownRef.current = true; };
+    // pointer/touch down/up to enable drag-based rotation control
+    const handlePointerDown = (e: any) => {
+      const canvas = document.querySelector('canvas');
+      if (!canvas) {
+        isPointerDownRef.current = true;
+        return;
+      }
+      const rect = canvas.getBoundingClientRect();
+
+      let clientX = 0;
+      let clientY = 0;
+      if ('touches' in e && e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else if ('clientX' in e) {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+
+      const x = (clientX - rect.left) / rect.width;
+      const y = (clientY - rect.top) / rect.height;
+      prevTargetRef.current.x = Math.max(0, Math.min(1, x));
+      prevTargetRef.current.y = Math.max(0, Math.min(1, y));
+      setMousePos({ x: prevTargetRef.current.x, y: prevTargetRef.current.y });
+      isPointerDownRef.current = true;
+    };
     const handlePointerUp = () => { isPointerDownRef.current = false; };
     window.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointerup', handlePointerUp);
@@ -231,39 +255,20 @@ const SceneContent: React.FC<Three3DSceneProps> = ({ menuItem }) => {
     };
   }, []);
 
-  // Update rotation based on mouse position
+  // Update rotation based on touch position
   useFrame(() => {
     if (groupRef.current) {
-      // Convert mouse position to rotation (0 to 2π)
+      // Convert position to rotation (0 to 2π for horizontal, -π/2 to π/2 for vertical)
       const targetY = mousePos.x * Math.PI * 2;
       const targetX = (mousePos.y - 0.5) * Math.PI;
 
       const currentY = groupRef.current.rotation.y;
       const currentX = groupRef.current.rotation.x;
 
+      // Only update while dragging — no inertia or momentum
       if (isPointerDownRef.current) {
-        // direct, smooth follow while dragging
         groupRef.current.rotation.y = THREE.MathUtils.lerp(currentY, targetY, 0.2);
         groupRef.current.rotation.x = THREE.MathUtils.lerp(currentX, targetX, 0.2);
-        // reset tiny velocity while actively dragging
-        velocityRef.current.x *= 0.5;
-        velocityRef.current.y *= 0.5;
-      } else {
-        // apply inertia based on last pointer movement
-        groupRef.current.rotation.y = currentY + velocityRef.current.x * 1.2;
-        groupRef.current.rotation.x = currentX + velocityRef.current.y * 1.2;
-
-        // decay velocity
-        velocityRef.current.x *= 0.92;
-        velocityRef.current.y *= 0.92;
-
-        // slowly nudge back toward the exact target for stability
-        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetY, 0.03);
-        groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetX, 0.03);
-
-        // zero tiny velocities
-        if (Math.abs(velocityRef.current.x) < 1e-5) velocityRef.current.x = 0;
-        if (Math.abs(velocityRef.current.y) < 1e-5) velocityRef.current.y = 0;
       }
     }
   });
