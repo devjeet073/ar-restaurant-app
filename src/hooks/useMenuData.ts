@@ -27,8 +27,8 @@ export const useMenuData = (restaurantId: string | null) => {
           console.info('🟡 USING MOCK MENU DATA: Mock restaurant detected');
           console.info('📊 Menu Items:', MOCK_MENU_DATA.length, 'items');
           console.info('📂 Categories:', MOCK_CATEGORIES.length, 'categories');
-          setItems(MOCK_MENU_DATA as MenuItem[]);
-          setCategories(MOCK_CATEGORIES as Category[]);
+          setItems(MOCK_MENU_DATA as unknown as MenuItem[]);
+          setCategories(MOCK_CATEGORIES as unknown as Category[]);
           return;
         }
 
@@ -37,8 +37,8 @@ export const useMenuData = (restaurantId: string | null) => {
           console.info('🟡 USING MOCK DATA: Supabase not configured');
           console.info('📊 Menu Items:', MOCK_MENU_DATA.length, 'items');
           console.info('📂 Categories:', MOCK_CATEGORIES.length, 'categories');
-          setItems(MOCK_MENU_DATA as MenuItem[]);
-          setCategories(MOCK_CATEGORIES as Category[]);
+          setItems(MOCK_MENU_DATA as unknown as MenuItem[]);
+          setCategories(MOCK_CATEGORIES as unknown as Category[]);
           return;
         }
 
@@ -81,8 +81,8 @@ export const useMenuData = (restaurantId: string | null) => {
           console.warn('⚠️ No menu items in database, falling back to mock data');
           console.info('📊 Mock Menu Items:', MOCK_MENU_DATA.length, 'items');
           console.info('📂 Mock Categories:', MOCK_CATEGORIES.length, 'categories');
-          setItems(MOCK_MENU_DATA as MenuItem[]);
-          setCategories(MOCK_CATEGORIES as Category[]);
+          setItems(MOCK_MENU_DATA as unknown as MenuItem[]);
+          setCategories(MOCK_CATEGORIES as unknown as Category[]);
         } else {
           console.info('🟢 Successfully loaded from database');
           console.info('📋 Database items:', items);
@@ -96,16 +96,16 @@ export const useMenuData = (restaurantId: string | null) => {
         // Fallback to mock data on error
         if (!isSupabaseConfigured()) {
           console.info('🟡 FALLBACK: Using mock menu data (Supabase not configured)');
-          setItems(MOCK_MENU_DATA as MenuItem[]);
-          setCategories(MOCK_CATEGORIES as Category[]);
+          setItems(MOCK_MENU_DATA as unknown as MenuItem[]);
+          setCategories(MOCK_CATEGORIES as unknown as Category[]);
         } else {
           const errorMessage = handleSupabaseError(err);
           setError(errorMessage);
           console.error('❌ Failed to load menu:', errorMessage);
           // Still show mock data to user as fallback
           console.info('🟡 FALLBACK: Using mock data as error recovery');
-          setItems(MOCK_MENU_DATA as MenuItem[]);
-          setCategories(MOCK_CATEGORIES as Category[]);
+          setItems(MOCK_MENU_DATA as unknown as MenuItem[]);
+          setCategories(MOCK_CATEGORIES as unknown as Category[]);
         }
       } finally {
         setIsLoading(false);
