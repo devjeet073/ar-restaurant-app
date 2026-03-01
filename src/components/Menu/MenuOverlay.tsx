@@ -17,7 +17,6 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const [windowWidth, setWindowWidth] = React.useState(
     typeof window !== 'undefined' ? window.innerWidth : 1024
   );
