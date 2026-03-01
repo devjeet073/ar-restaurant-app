@@ -59,15 +59,50 @@ export const ARViewer: React.FC<ARViewerProps> = ({
       height: '100vh',
       overflow: 'hidden',
       backgroundColor: '#000',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
+      {/* Responsive Header */}
+      <div style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        color: 'white',
+        padding: 'clamp(12px, 3vw, 16px)',
+        textAlign: 'center',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        minHeight: '60px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: '0 0 auto',
+        zIndex: 20,
+        backdropFilter: 'blur(10px)',
+      }}>
+        <div>
+          <h1 style={{
+            margin: '0 0 4px 0',
+            fontSize: 'clamp(16px, 4vw, 20px)',
+            fontWeight: '600',
+          }}>
+            {restaurant?.name}
+          </h1>
+          {restaurant?.description && (
+            <p style={{
+              margin: '0',
+              fontSize: 'clamp(11px, 2.5vw, 12px)',
+              opacity: 0.8,
+            }}>
+              {restaurant.description}
+            </p>
+          )}
+        </div>
+      </div>
+
       {/* Camera/AR Canvas Area */}
       <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        position: 'relative',
+        flex: 1,
         backgroundColor: '#f0f0f0',
+        overflow: 'hidden',
       }}>
         {isLoading ? (
           <div style={{
@@ -86,63 +121,12 @@ export const ARViewer: React.FC<ARViewerProps> = ({
         )}
       </div>
 
-      {/* Restaurant Header */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        color: 'white',
-        padding: '16px',
-        pointerEvents: 'none',
-        zIndex: 10,
-        textAlign: 'center',
-      }}>
-        <h1 style={{
-          margin: '0 0 5px 0',
-          fontSize: '20px',
-        }}>
-          {restaurant.name}
-        </h1>
-        {restaurant.description && (
-          <p style={{
-            margin: '0',
-            fontSize: '12px',
-            opacity: 0.8,
-          }}>
-            {restaurant.description}
-          </p>
-        )}
-      </div>
-
-      {/* Menu Overlay */}
+      {/* Menu Overlay - Responsive */}
       <MenuOverlay
         items={menuItems}
         isLoading={isLoading}
         onItemSelected={setSelectedItem}
       />
-
-      {/* Marker Detection Hint */}
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: 'rgba(102, 126, 234, 0.9)',
-        color: 'white',
-        padding: '20px',
-        borderRadius: '8px',
-        textAlign: 'center',
-        pointerEvents: 'none',
-        zIndex: 5,
-        fontSize: '14px',
-      }}>
-        <p style={{ margin: '0 0 10px 0' }}>📱 Point camera at AR marker</p>
-        <p style={{ margin: '0', fontSize: '12px', opacity: 0.8 }}>
-          (Hiro/Kanji marker)
-        </p>
-      </div>
     </div>
   );
 };

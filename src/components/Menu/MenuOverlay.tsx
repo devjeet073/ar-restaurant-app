@@ -17,6 +17,21 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [windowWidth, setWindowWidth] = React.useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobileView = windowWidth < 768;
+
   const selectedItem = items.find(item => item.id === selectedItemId);
 
   const handleSelectItem = (item: MenuItem) => {
@@ -36,59 +51,80 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({
       pointerEvents: 'none',
       zIndex: 100,
     }}>
-      {/* Menu Cards List - Bottom Right */}
+      {/* Menu Cards List - Responsive positioning */}
       <div style={{
         position: 'absolute',
-        bottom: '20px',
-        right: '20px',
-        maxWidth: '280px',
-        maxHeight: isExpanded ? '70vh' : '300px',
+        ...(isMobileView
+          ? {
+              bottom: '10px',
+              left: '10px',
+              right: '10px',
+              maxWidth: 'none',
+              width: 'calc(100% - 20px)',
+              maxHeight: isExpanded ? '60vh' : 'auto',
+            }
+          : {
+              bottom: '20px',
+              right: '20px',
+              maxWidth: '280px',
+              maxHeight: isExpanded ? '70vh' : '300px',
+            }),
         overflow: 'auto',
         pointerEvents: 'auto',
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: isMobileView ? 'row' : 'column',
         gap: '10px',
+        flexWrap: isMobileView ? 'wrap' : 'nowrap',
       }}>
         {isLoading ? (
           <LoadingSpinner size="sm" text="Loading menu..." />
         ) : items.length > 0 ? (
           <>
-            {items.slice(0, isExpanded ? undefined : 3).map(item => (
-              <MenuCard
+            {items.slice(0, isExpanded ? undefined : (isMobileView ? 4 : 3)).map(item => (
+              <div
                 key={item.id}
-                item={item}
-                isSelected={item.id === selectedItemId}
-                onSelect={() => handleSelectItem(item)}
-              />
+                style={{
+                  flex: isMobileView ? '0 1 calc(50% - 5px)' : 'none',
+                  minWidth: isMobileView ? 'calc(50% - 5px)' : 'auto',
+                }}
+              >
+                <MenuCard
+                  item={item}
+                  isSelected={item.id === selectedItemId}
+                  onSelect={() => handleSelectItem(item)}
+                />
+              </div>
             ))}
-            {!isExpanded && items.length > 3 && (
+            {!isExpanded && items.length > (isMobileView ? 4 : 3) && (
               <button
                 onClick={() => setIsExpanded(true)}
                 style={{
                   backgroundColor: '#667eea',
                   color: 'white',
                   border: 'none',
-                  padding: '10px',
+                  padding: 'clamp(8px, 2vw, 10px)',
                   borderRadius: '6px',
                   cursor: 'pointer',
-                  fontSize: '14px',
+                  fontSize: 'clamp(12px, 2vw, 14px)',
                   fontWeight: '600',
+                  flex: isMobileView ? '0 1 calc(50% - 5px)' : 'none',
                 }}
               >
                 View All ({items.length})
               </button>
             )}
-            {isExpanded && items.length > 3 && (
+            {isExpanded && items.length > (isMobileView ? 4 : 3) && (
               <button
                 onClick={() => setIsExpanded(false)}
                 style={{
                   backgroundColor: '#f0f0f0',
                   color: '#333',
                   border: 'none',
-                  padding: '10px',
+                  padding: 'clamp(8px, 2vw, 10px)',
                   borderRadius: '6px',
                   cursor: 'pointer',
-                  fontSize: '14px',
+                  fontSize: 'clamp(12px, 2vw, 14px)',
+                  flex: isMobileView ? '0 1 calc(50% - 5px)' : 'none',
                 }}
               >
                 Collapse
@@ -108,32 +144,49 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({
         )}
       </div>
 
-      {/* Selected Item Details - Bottom Left */}
+      {/* Selected Item Details - Responsive */}
       {selectedItem && (
         <div style={{
           position: 'absolute',
-          bottom: '20px',
-          left: '20px',
-          maxWidth: '280px',
+          ...(isMobileView
+            ? {
+                top: '10px',
+                left: '10px',
+                right: '10px',
+                maxWidth: 'none',
+                width: 'calc(100% - 20px)',
+              }
+            : {
+                bottom: '20px',
+                left: '20px',
+                maxWidth: '280px',
+              }),
           pointerEvents: 'auto',
           backgroundColor: 'white',
           borderRadius: '8px',
-          padding: '16px',
+          padding: 'clamp(12px, 3vw, 16px)',
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          maxHeight: isMobileView ? '120px' : 'auto',
+          overflow: 'auto',
         }}>
           <h3 style={{
-            margin: '0 0 10px 0',
-            fontSize: '16px',
+            margin: '0 0 8px 0',
+            fontSize: 'clamp(14px, 3vw, 16px)',
             color: '#333',
+            fontWeight: '600',
           }}>
             {selectedItem.name}
           </h3>
 
           <p style={{
-            margin: '0 0 10px 0',
-            fontSize: '14px',
+            margin: '0 0 8px 0',
+            fontSize: 'clamp(12px, 2.5vw, 14px)',
             color: '#666',
-            lineHeight: '1.4',
+            lineHeight: '1.3',
+            display: isMobileView ? '-webkit-box' : 'block',
+            WebkitLineClamp: isMobileView ? 2 : 'unset',
+            WebkitBoxOrient: 'vertical',
+            overflow: isMobileView ? 'hidden' : 'visible',
           }}>
             {selectedItem.description}
           </p>
@@ -142,9 +195,10 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            gap: '10px',
           }}>
             <span style={{
-              fontSize: '18px',
+              fontSize: 'clamp(14px, 3vw, 18px)',
               fontWeight: '700',
               color: '#667eea',
             }}>
@@ -153,8 +207,9 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({
 
             {selectedItem.prep_time_minutes && (
               <span style={{
-                fontSize: '12px',
+                fontSize: 'clamp(10px, 2vw, 12px)',
                 color: '#999',
+                whiteSpace: 'nowrap',
               }}>
                 ⏱ {selectedItem.prep_time_minutes} min
               </span>
@@ -163,11 +218,15 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({
 
           {selectedItem.dietary_tags && (
             <div style={{
-              marginTop: '10px',
-              fontSize: '12px',
+              marginTop: '8px',
+              fontSize: 'clamp(10px, 2vw, 12px)',
               color: '#999',
-              paddingTop: '10px',
+              paddingTop: '8px',
               borderTop: '1px solid #eee',
+              display: isMobileView ? '-webkit-box' : 'block',
+              WebkitLineClamp: isMobileView ? 1 : 'unset',
+              WebkitBoxOrient: 'vertical',
+              overflow: isMobileView ? 'hidden' : 'visible',
             }}>
               {selectedItem.dietary_tags}
             </div>

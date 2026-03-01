@@ -1,5 +1,7 @@
 # Web AR Restaurant Menu Application
 
+<!-- https://silly-salamander-548b11.netlify.app/?restaurant=demo-restaurant -->
+
 A production-ready, mobile-first Web AR application for displaying restaurant menus using augmented reality. Built with React + Three.js + AR.js, deployable on Netlify with Supabase backend.
 
 ## ✨ Features

@@ -85,23 +85,23 @@ const AppContent: React.FC = () => {
         width: '100%',
         minHeight: '100vh',
         backgroundColor: '#f5f5f5',
-        padding: '20px',
+        padding: 'clamp(12px, 3vw, 20px)',
       }}>
         {/* Header */}
         <div style={{
           maxWidth: '1200px',
-          margin: '0 auto 30px',
+          margin: '0 auto clamp(20px, 5vw, 30px)',
           textAlign: 'center',
         }}>
           <h1 style={{
-            fontSize: '28px',
-            marginBottom: '10px',
+            fontSize: 'clamp(22px, 6vw, 28px)',
+            marginBottom: 'clamp(8px, 2vw, 10px)',
           }}>
             {restaurant.name}
           </h1>
           {restaurant.description && (
             <p style={{
-              fontSize: '16px',
+              fontSize: 'clamp(13px, 3vw, 16px)',
               color: '#666',
               marginBottom: 0,
             }}>
@@ -110,13 +110,13 @@ const AppContent: React.FC = () => {
           )}
         </div>
 
-        {/* Menu Items Grid */}
+        {/* Menu Items Grid - Responsive */}
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(150px, 45vw, 280px), 1fr))',
+          gap: 'clamp(12px, 3vw, 20px)',
         }}>
           {menuData.items.map(item => (
             <div
@@ -124,8 +124,10 @@ const AppContent: React.FC = () => {
               style={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                padding: '20px',
+                padding: 'clamp(14px, 3vw, 20px)',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
               {item.image_url && (
@@ -134,17 +136,17 @@ const AppContent: React.FC = () => {
                   alt={item.name}
                   style={{
                     width: '100%',
-                    height: '200px',
+                    height: 'clamp(140px, 30vw, 200px)',
                     objectFit: 'cover',
                     borderRadius: '6px',
-                    marginBottom: '12px',
+                    marginBottom: 'clamp(10px, 2vw, 12px)',
                   }}
                 />
               )}
 
               <h3 style={{
-                margin: '0 0 8px',
-                fontSize: '18px',
+                margin: '0 0 clamp(6px, 1.5vw, 8px)',
+                fontSize: 'clamp(14px, 3.5vw, 18px)',
                 color: '#333',
               }}>
                 {item.name}
@@ -152,8 +154,8 @@ const AppContent: React.FC = () => {
 
               {item.description && (
                 <p style={{
-                  margin: '0 0 12px',
-                  fontSize: '14px',
+                  margin: '0 0 clamp(10px, 2.5vw, 12px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
                   color: '#666',
                   lineHeight: '1.4',
                 }}>
@@ -165,9 +167,10 @@ const AppContent: React.FC = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                gap: '10px',
               }}>
                 <span style={{
-                  fontSize: '18px',
+                  fontSize: 'clamp(14px, 3vw, 18px)',
                   fontWeight: '700',
                   color: '#667eea',
                 }}>
@@ -176,8 +179,9 @@ const AppContent: React.FC = () => {
 
                 {item.prep_time_minutes && (
                   <span style={{
-                    fontSize: '12px',
+                    fontSize: 'clamp(10px, 2vw, 12px)',
                     color: '#999',
+                    whiteSpace: 'nowrap',
                   }}>
                     ⏱ {item.prep_time_minutes} min
                   </span>
@@ -186,10 +190,10 @@ const AppContent: React.FC = () => {
 
               {(item.dietary_tags || item.allergens) && (
                 <div style={{
-                  marginTop: '12px',
-                  paddingTop: '12px',
+                  marginTop: 'clamp(10px, 2.5vw, 12px)',
+                  paddingTop: 'clamp(10px, 2.5vw, 12px)',
                   borderTop: '1px solid #eee',
-                  fontSize: '12px',
+                  fontSize: 'clamp(10px, 2vw, 12px)',
                   color: '#999',
                 }}>
                   {item.dietary_tags && <div>{item.dietary_tags}</div>}
@@ -213,7 +217,7 @@ const AppContent: React.FC = () => {
         {/* Back to Menu Button */}
         <div style={{
           maxWidth: '1200px',
-          margin: '40px auto 0',
+          margin: 'clamp(30px, 5vw, 40px) auto 0',
           textAlign: 'center',
         }}>
           <button
@@ -222,12 +226,15 @@ const AppContent: React.FC = () => {
               backgroundColor: '#667eea',
               color: 'white',
               border: 'none',
-              padding: '12px 24px',
+              padding: 'clamp(10px, 2vw, 12px) clamp(16px, 4vw, 24px)',
               borderRadius: '6px',
               cursor: 'pointer',
-              fontSize: '16px',
+              fontSize: 'clamp(14px, 2.5vw, 16px)',
               fontWeight: '600',
+              transition: 'all 0.2s ease',
             }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#5568d3')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#667eea')}
           >
             Back to Menu
           </button>
